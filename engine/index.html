@@ -54,26 +54,65 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">PWF Engine </div>  </div>
 </div>
 <div class="contents">
-<div class="textblock"><p>PWF Engine is the engine of the PWF framework, used to create web wrappers based on generic schemas.</p>
-<p>Let's suppose you want to navigate a page of a website to extract some information from it. The first thing you have to is to create the engine class specifying the schemas root directory: </p>
-<div class="fragment"><pre class="fragment"><a class="code" href="class_p_engine.html" title="The main class.">PEngine</a> *engine = <span class="keyword">new</span> <a class="code" href="class_p_engine.html" title="The main class.">PEngine</a>();
+<div class="textblock"><p>PWF Engine is the engine of the PWF framework, used to create and use web wrappers based on generic schemas.</p>
+<p>Let's suppose you want to navigate a page of a website to extract some information from it. </p>
+<dl class="note"><dt><b>Note:</b></dt><dd>a general understanding of QT it is needed to use the engine.</dd></dl>
+<p>We will create a class MyNavigator with some members: </p>
+<div class="fragment"><pre class="fragment"><a class="code" href="class_p_engine.html" title="The main class.">PEngine</a> *engine;
+<a class="code" href="class_p_site_wrapper.html" title="A website wrapper.">PSiteWrapper</a> *siteWrapper;
+<a class="code" href="class_p_page_wrapper.html" title="A website page wrapper.">PPageWrapper</a> *pageWrapper;
+</pre></div><p> and some slots: </p>
+<div class="fragment"><pre class="fragment"><span class="keyword">public</span> slots:
+<span class="keywordtype">void</span> attemptSiteSchemaFinished(<a class="code" href="class_p_action.html#ab3fbd78b16e677d10c37105c280b777e">PAction::StatusType</a> finishedStatus));
+<span class="keywordtype">void</span> attemptPageSchemaFinished(<a class="code" href="class_p_action.html#ab3fbd78b16e677d10c37105c280b777e">PAction::StatusType</a> finishedStatus));
+</pre></div><p> We will see how to use them later.</p>
+<p>The first thing you have to is to create the engine class specifying the schemas root directory: </p>
+<div class="fragment"><pre class="fragment">engine = <span class="keyword">new</span> <a class="code" href="class_p_engine.html" title="The main class.">PEngine</a>();
 engine-&gt;setSchemasCandidatesDirectory(<span class="stringliteral">&quot;schemas/&quot;</span>);
-</pre></div> <dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="class_p_engine.html" title="The main class.">PEngine</a></dd></dl>
-<p>Now you can create the site wrapper passing the engine to it: </p>
-<div class="fragment"><pre class="fragment"><a class="code" href="class_p_site_wrapper.html" title="A website wrapper.">PSiteWrapper</a> *myWrapper = <span class="keyword">new</span> <a class="code" href="class_p_site_wrapper.html" title="A website wrapper.">PSiteWrapper</a>(engine);
-myWrapper-&gt;<a class="code" href="class_p_wrapper.html#a6d5346f3c7d3e3867b2a5f1acc377a50">setUrl</a>(<span class="stringliteral">&quot;http://www.sitename.com/&quot;</span>);
-</pre></div> <dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="class_p_site_wrapper.html" title="A website wrapper.">PSiteWrapper</a></dd></dl>
-<p>Now the critical part: setting a schema. You have two choices:</p>
+</pre></div><p>Now you can create the site wrapper passing the engine to it: </p>
+<div class="fragment"><pre class="fragment">myWrapper = <span class="keyword">new</span> <a class="code" href="class_p_site_wrapper.html" title="A website wrapper.">PSiteWrapper</a>(engine);
+myWrapper-&gt;setUrl(<span class="stringliteral">&quot;http://www.sitename.com/&quot;</span>);
+</pre></div><p>Now the critical part: setting a schema. You have two choices:</p>
 <ul>
-<li>Automatically detect the schema, use this if you don't know what is the specific schema but you have a list of possible candidates. <div class="fragment"><pre class="fragment"><a class="code" href="class_p_action.html" title="Implements the command-pattern design technique for asynchronous operations. NOTE: The action is disp...">PAction</a> *schemaAction = myWrapper-&gt;<a class="code" href="class_p_wrapper.html#af0e97539dab3122fd32746d24fc9aee0">detectSchema</a>();
+<li>Automatically detect the schema, use this if you don't know what is the specific schema but you have a list of possible candidates. <div class="fragment"><pre class="fragment"><a class="code" href="class_p_action.html" title="Implements the command-pattern design technique for asynchronous operations. NOTE: The action is disp...">PAction</a> *attemptSiteSchema = myWrapper-&gt;detectSchema();
 </pre></div> In this case you have only an idea of the site content, e.g. a forum, but you have schemas for the various kinds, e.g. one for phpbb, one for smf, etc., so you let the system detects the right schema for you.</li>
 </ul>
 <ul>
-<li>Set the schema manually: <div class="fragment"><pre class="fragment"><a class="code" href="class_p_action.html" title="Implements the command-pattern design technique for asynchronous operations. NOTE: The action is disp...">PAction</a> *schemaAction = myWrapper-&gt;<a class="code" href="class_p_wrapper.html#acde7ee8ac27bf20198144c8c44184701">setSchema</a>(<span class="stringliteral">&quot;smf&quot;</span>);
+<li>Set the schema manually: <div class="fragment"><pre class="fragment"><a class="code" href="class_p_action.html" title="Implements the command-pattern design technique for asynchronous operations. NOTE: The action is disp...">PAction</a> *attemptSiteSchema = myWrapper-&gt;setSchema(<span class="stringliteral">&quot;smf&quot;</span>);
 </pre></div> In this case you already know that the site is an smf forum and so matches the schema written for it.</li>
 </ul>
-<p>Obviously, these are only some examples of schema usages, (ideally) you could model a generic schema that apply to all forums! </p>
-</div></div>
+<p>Obviously, these are only some examples of schema usages, (ideally) you could model a generic schema that apply to all forums!</p>
+<p>The <a class="el" href="class_p_action.html" title="Implements the command-pattern design technique for asynchronous operations. NOTE: The action is disp...">PAction</a> is a simple class that executes an action, in this case sets/detects the schema of a wrapper, and emits a QT Signal when it has finished. Check <a href="http://developer.qt.nokia.com/doc/signalsandslots.html">http://developer.qt.nokia.com/doc/signalsandslots.html</a> for more information about the signal and slot mechanism.</p>
+<p>Now we'll say to the system to call our attemptSiteSchemaFinished() slot when the schemaAction has finished it's job, passing to it the status of the action. </p>
+<div class="fragment"><pre class="fragment">connect(attemptSchema, SIGNAL(finished(<a class="code" href="class_p_action.html#ab3fbd78b16e677d10c37105c280b777e">PAction::StatusType</a>)),
+        <span class="keyword">this</span>, SLOT(attemptSiteSchemaFinished(<a class="code" href="class_p_action.html#ab3fbd78b16e677d10c37105c280b777e">PAction::StatusType</a>)));
+</pre></div><p>If the action has finished without errors, we can create the wrapper for the page we want to navigate and repeat the operation to set/detect its schema. </p>
+<div class="fragment"><pre class="fragment"><span class="keywordtype">void</span> attemptSiteSchemaFinished(<a class="code" href="class_p_action.html#ab3fbd78b16e677d10c37105c280b777e">PAction::StatusType</a> finishedStatus)) {
+  <span class="keywordflow">if</span> (finishedStatus == <a class="code" href="class_p_action.html" title="Implements the command-pattern design technique for asynchronous operations. NOTE: The action is disp...">PAction</a>:StatusSuccess) {
+    <span class="comment">// our schema is ready!</span>
+    pageWrapper = <span class="keyword">new</span> PPAgeWrapper(engine, siteWrapper);
+    <a class="code" href="class_p_action.html" title="Implements the command-pattern design technique for asynchronous operations. NOTE: The action is disp...">PAction</a> *attemptPageSchema = pageWrapper-&gt;<a class="code" href="class_p_wrapper.html#acde7ee8ac27bf20198144c8c44184701">setSchema</a>(<span class="stringliteral">&quot;lastposts&quot;</span>);
+    connect(attemptPageSchema, SIGNAL(finished(<a class="code" href="class_p_action.html#ab3fbd78b16e677d10c37105c280b777e">PAction::StatusType</a>)),
+            <span class="keyword">this</span>, SLOT(attemptPageSchemaFinished(<a class="code" href="class_p_action.html#ab3fbd78b16e677d10c37105c280b777e">PAction::StatusType</a>)));
+  } <span class="keywordflow">else</span> {
+    <span class="comment">// error</span>
+  }
+}
+</pre></div><p>When the page schema is ready, we can navigate it to extract the information we want: </p>
+<div class="fragment"><pre class="fragment"><span class="keywordtype">void</span> attemptPageSchemaFinished(<a class="code" href="class_p_action.html#ab3fbd78b16e677d10c37105c280b777e">PAction::StatusType</a> finishedStatus)) {
+  <span class="keywordflow">if</span> (finishedStatus == <a class="code" href="class_p_action.html" title="Implements the command-pattern design technique for asynchronous operations. NOTE: The action is disp...">PAction</a>:StatusSuccess) {
+    <span class="comment">// our schema is ready!</span>
+    <a class="code" href="class_p_page_element.html">PPageElement</a> *lastsPosts = pageWrapper-&gt;<a class="code" href="class_p_page_wrapper.html#a1ffe358f3b95b9622b8aced358e5b4aa">mappedPage</a>();
+    <a class="code" href="class_p_page_element.html">PPageElement</a> post;
+    <span class="keywordflow">while</span> ((post = lastsPosts-&gt;<a class="code" href="class_p_page_element.html#a5086d85135fed965a00de9f837aaac44">next</a>(<span class="stringliteral">&quot;post&quot;</span>))) {
+        cout &lt;&lt; <span class="stringliteral">&quot;Title: &quot;</span> &lt;&lt; post.<a class="code" href="class_p_page_element.html#a9b1e77520d7b766ebf7cc3ffe42686ce">child</a>(<span class="stringliteral">&quot;title&quot;</span>).at(0).text() &lt;&lt; endl;
+        cout &lt;&lt; <span class="stringliteral">&quot;Description: &quot;</span> &lt;&lt; post.<a class="code" href="class_p_page_element.html#a9b1e77520d7b766ebf7cc3ffe42686ce">child</a>(<span class="stringliteral">&quot;description&quot;</span>).at(0).text() &lt;&lt; endl;
+    }
+  } <span class="keywordflow">else</span> {
+    <span class="comment">// error</span>
+  }
+}
+</pre></div> </div></div>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -88,7 +127,7 @@ myWrapper-&gt;<a class="code" href="class_p_wrapper.html#a6d5346f3c7d3e3867b2a5f
 </iframe>
 </div>
 
-<hr class="footer"/><address class="footer"><small>Generated on Fri Feb 17 2012 13:11:46 for pwfengine by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Sat Feb 18 2012 12:43:43 for pwfengine by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

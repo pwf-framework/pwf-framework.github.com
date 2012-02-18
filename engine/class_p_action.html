@@ -130,7 +130,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 <div class="textblock"><p>Implements the command-pattern design technique for asynchronous operations. NOTE: The action is disposable. </p>
 <p>The action can be started with the <a class="el" href="class_p_action.html#a8651a355f0928bee4d8cc7123390611c">start()</a> method, stopped with <a class="el" href="class_p_action.html#aa03c325754452bb6c90aa20947a3525c">stop()</a> that will asynchronously finish with the StatusNone status. Anyway, the finished signals are emitted when the action finishes.</p>
 <p>If still active, the action will be automatically stopped at destruction time.</p>
-<dl class="warning"><dt><b>Warning:</b></dt><dd>In the <a class="el" href="class_p_action.html#a8651a355f0928bee4d8cc7123390611c">start()</a> and <a class="el" href="class_p_action.html#aa03c325754452bb6c90aa20947a3525c">stop()</a> methods of the subclasses remember to call the parent method as the first statement. </dd></dl>
+<dl class="warning"><dt><b>Warning:</b></dt><dd>If you subclass <a class="el" href="class_p_action.html" title="Implements the command-pattern design technique for asynchronous operations. NOTE: The action is disp...">PAction</a>, remember to call the parent method as the first statement in the overrided <a class="el" href="class_p_action.html#a8651a355f0928bee4d8cc7123390611c">start()</a> and <a class="el" href="class_p_action.html#aa03c325754452bb6c90aa20947a3525c">stop()</a> methods to assure right behaviour. </dd></dl>
 </div><hr/><h2>Member Enumeration Documentation</h2>
 <a class="anchor" id="ab3fbd78b16e677d10c37105c280b777e"></a><!-- doxytag: member="PAction::StatusType" ref="ab3fbd78b16e677d10c37105c280b777e" args="" -->
 <div class="memitem">
@@ -336,7 +336,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 </iframe>
 </div>
 
-<hr class="footer"/><address class="footer"><small>Generated on Fri Feb 17 2012 13:11:46 for pwfengine by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Sat Feb 18 2012 12:43:43 for pwfengine by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>
